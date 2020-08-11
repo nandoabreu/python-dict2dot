@@ -20,8 +20,14 @@ With the python console and the [dict2doc package](https://github.com/nandoabreu
 
     >>> dot_dict = Dict2Dot(my_dict)
     >>> print( dot_dict.1597184314.urls, dot_dict.1597184314.ping.v )
+
     >>> dot_dict.1597184710 = { 'urls': ['x.net'], 'ping': {'un':'ms', 'v':9} } }
     >>> print( my_dict['1597184710']['urls'], my_dict['1597184710']['ping']['v'] )
+
+    >>> new_dot_dict = Dict2Dot()
+    >>> new_dot_dict.1597186760 = { 'urls': ['x.net'], 'ping': {'un':'ms', 'v':11} } }
+    >>> get_dict = new_dot_dict.dict()
+    >>> print( get_dict )
 
 
 ## Documentation
