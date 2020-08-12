@@ -1,0 +1,23 @@
+Help on package dict2dot:
+
+NAME
+    dict2dot - Python Dictionary to Dot notation (class) package
+
+DESCRIPTION
+    This package works with nested dictionaries, but not with dictionaries nested into other types.
+    
+    
+    API usage:
+        from dict2dot import Dict2Dot
+    
+        my_d2dot = Dict2Dot({'dogs': {'breeds': ['Golden']}, 'birds': {'breeds': ['Cockatiel']}})
+        my_d2dot.dogs.breeds.append('Lhasa Apso')
+        print( my_d2dot.dogs )
+    
+        my_dict = my_d2dot.dict()
+        print( my_dict )
+    
+        other_dot2dict = Dict2Dot()
+        other_dot2dict.a_new_key = 'a new value'
+        print( other_dot2dict.a_new_key )
+

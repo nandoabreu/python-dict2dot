@@ -1,0 +1,37 @@
+Help on class Dict2Dot in module dict2dot:
+
+class Dict2Dot(builtins.dict)
+ |  Dict2Dot(orig={})
+ |  
+ |  Dict2Dot class: "the main class"
+ |  
+ |  Arguments:
+ |      (dictionary, optional): A preexistent dictionary may be passed
+ |  
+ |  dict(self) -> dict
+ |      Return updated dictionary
+ |  
+ |  ----------------------------------------------------------------------
+ |  Some inherited methods:
+ |  
+ |  __contains__(self, key, /)
+ |      True if the dictionary has the specified key, else False.
+ |  
+ |  __iter__(self, /)
+ |      Implement iter(self).
+ |  
+ |  __len__(self, /)
+ |      Return len(self).
+ |  
+ |  keys(...)
+ |      D.keys() -> a set-like object providing a view on D's keys
+ |  
+ |  values(...)
+ |      D.values() -> an object providing a view on D's values
+ |  
+ |  popitem(self, /)
+ |      Remove and return a (key, value) pair as a 2-tuple.
+ |      
+ |      Pairs are returned in LIFO (last-in, first-out) order.
+ |      Raises KeyError if the dict is empty.
+
