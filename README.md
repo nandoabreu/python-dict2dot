@@ -1,6 +1,6 @@
 # python-dict2dot
 
-Python Dictionary to Dot notation (class) package published in [PyPi](https://pypi.org/project/dict2dot/).  
+Python Dictionary to **Dot notation** published in [PyPi](https://pypi.org/project/python-dict2dot/).  
 _Note: This implementation admits dot notation to access nested dictionaries, once the parent is dict._
 
 &nbsp;  
@@ -8,13 +8,13 @@ _Note: This implementation admits dot notation to access nested dictionaries, on
 ## README Map
 
 - To pip install, run: ` pip install dict2dot `
-- To use the main class, skip to [The main class](https://github.com/nandoabreu/dict2dot#the-main-class).
-- Instructions on advanced/technical documentation, go to [Documentation](https://github.com/nandoabreu/dict2dot#documentation).
-- Or click to skip to the [To do](https://github.com/nandoabreu/dict2dot#to-do) list.
+- To use the main class, skip to [The main class](https://github.com/nandoabreu/python-dict2dot#the-main-class).
+- Instructions on advanced/technical documentation, go to [Documentation](https://github.com/nandoabreu/python-dict2dot#documentation).
+- Or click to skip to the [To do](https://github.com/nandoabreu/python-dict2dot#to-do) list.
 
 
 ## The main class
-With the python console and the [dict2doc package](https://github.com/nandoabreu/dict2dot/dict2dot/__init__.py), we can get things running:
+With the python console and the [dict2doc package](https://github.com/nandoabreu/python-dict2dot/dict2dot/__init__.py), we can get things running:
 
     $ python
 
@@ -44,7 +44,7 @@ Or try from command line:
 
     $ python -c "import dict2dot; print(dict2dot.__doc__)"
 
-All documentation can be found in [docs](https://github.com/nandoabreu/dict2dot/docs).
+All documentation can be found in [docs](https://github.com/nandoabreu/python-dict2dot/docs).
 
 
 ## To do
