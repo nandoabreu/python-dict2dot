@@ -32,8 +32,8 @@ class Dict2Dot(dict):
     '''
     def __init__(self, orig={}):
         # Set a preexistent dict into self
-        for key in orig:
-            self.__setattr__(key, orig[key])
+        for key, value in orig.items():
+            self.__setattr__(key, value)
 
     def __getattr__(self, key):
         # Return a value from the dict (even nested)
