@@ -1,72 +1,86 @@
 #! /usr/bin/env python3
-from inspect import currentframe, getframeinfo
-from sys import exit
+from unittest import TestCase
 
 import dict2dot
 
-log = dict2dot.Logger().get_logger()
 
+class Test(TestCase):
+    def test_intanciate_param_none(self):
+        obj = None
+        d2d = dict2dot.Dict2Dot(obj)
+        assert isinstance(d2d, dict2dot.Dict2Dot)
 
-obj = None
-log.debug(f'********** Test {obj}')
-d2d = dict2dot.Dict2Dot(obj)
-log.debug('*** repr: {}: {}'.format(type(repr(d2d)).__name__, repr(d2d)))
-log.debug('*** str: {}: {}'.format(type(d2d).__name__, d2d))
-log.debug('*** dict(): {}: {}'.format(type(d2d.dict()).__name__, d2d.dict()))
+    def test_intanciate_empty_dict(self):
+        obj = {}
+        d2d = dict2dot.Dict2Dot(obj)
+        assert isinstance(d2d, dict2dot.Dict2Dot)
 
-obj = {}
-log.debug(f'********** Test {obj}')
-d2d = dict2dot.Dict2Dot(obj)
-# var.update({'name': 'variable'})
+    def test_flat_dict(self):
+        obj = {'description': 'Python Dictionary to Dot notation'}
+        d2d = dict2dot.Dict2Dot(obj)
+        assert d2d.description == obj['description']
 
-obj = {'description': 'Python Dictionary to Dot notation'}
-log.debug(f'********** Test {obj}')
-d2d = dict2dot.Dict2Dot(obj)
-log.debug('*** repr: {}: {}'.format(type(repr(d2d)).__name__, repr(d2d)))
-log.debug('*** str: {}: {}'.format(type(d2d).__name__, d2d))
-log.debug('*** dict(): {}: {}'.format(type(d2d.dict()).__name__, d2d.dict()))
-d2d.description == obj['description'] or log.error(f'!!!!!!!!!! Assertion error on {repr(d2d)} !!!!!!!!!!')
+    def test_nested_dict(self):
+        obj = {'pet': {'genus': 'Canis', 'name': 'Bono', 'breed': 'Golden Retriever'}}
+        d2d = dict2dot.Dict2Dot(obj)
+        assert isinstance(d2d.pet, dict2dot.Dict2Dot)
+        assert d2d.pet.breed == obj['pet']['breed']
 
-obj = {'pet': {'genus': 'Canis', 'name': 'Bono', 'breed': 'Golden Retriever'}}
-log.debug(f'********** Test {obj}')
-d2d = dict2dot.Dict2Dot(obj)
-log.debug('*** repr: {}: {}'.format(type(repr(d2d)).__name__, repr(d2d)))
-log.debug('*** str: {}: {}'.format(type(d2d).__name__, d2d))
-log.debug('*** dict(): {}: {}'.format(type(d2d.dict()).__name__, d2d.dict()))
-isinstance(d2d.pet, dict2dot.Dict2Dot) or log.error(f'!!!!!!!!!! Assertion error on {repr(d2d)} !!!!!!!!!!')
-d2d.pet.breed == obj['pet']['breed'] or log.error(f'!!!!!!!!!! Assertion error on {repr(d2d)} !!!!!!!!!!')
+    def test_nested_dict_nesting_list(self):
+        obj = {'dogs': {'breeds': ['Golden Retriever', 'Labrador Retriever']}, 'cats': {'breeds': ['Bombay']}}
+        d2d = dict2dot.Dict2Dot(obj)
+        assert isinstance(d2d.dogs, dict2dot.Dict2Dot)
+        assert isinstance(d2d.dogs.breeds, list)
+        assert d2d.dogs.breeds[0] == obj['dogs']['breeds'][0]
 
-obj = {'dogs': {'breeds': ['Golden Retriever', 'Labrador Retriever']}, 'cats': {'breeds': ['Bombay']}}
-log.debug(f'********** Test {obj}')
-d2d = dict2dot.Dict2Dot(obj)
+    def test_nested_list_nesting_dict(self):
+        obj = {
+            'name': {'first': 'First name', 'last': 'Family name'},
+            'parents': [{'mom': 'Mother\' name'}, {'dad': 'Father\' name'}]
+        }
+        d2d = dict2dot.Dict2Dot(obj)
+        assert isinstance(d2d.parents, list)
+        assert isinstance(d2d.parents[0], dict2dot.Dict2Dot)
+        assert d2d.parents[0].mom == obj['parents'][0]['mom']
 
-obj = {
-    'name': {'first': 'First name', 'last': 'Family name'},
-    'parents': [{'mom': 'Mother\' name'}, {'dad': 'Father\' name'}]
-}
-log.debug(f'********** Test {obj}')
-d2d = dict2dot.Dict2Dot(obj)
+    def test_nested_list_nesting_mixed_types(self):
+        obj = {'parent': [{'child': 'Child\'s name'}, ['apples', {'money': True}], 'joy']}
+        d2d = dict2dot.Dict2Dot(obj)
+        assert isinstance(d2d.parent, list)
+        assert isinstance(d2d.parent[0], dict2dot.Dict2Dot)
+        # assert isinstance(d2d.parent[1][1], dict2dot.Dict2Dot)
+        # assert d2d.parents[0].mom == obj['parents'][0]['mom']
 
-# log.debug(my_d2d.dogs.breeds)
-# ['Golden Retriever', 'Labrador Retriever']
+    def test_str_and_repr(self):
+        obj = {'dogs': {'breeds': ['Golden Retriever']}, 'cats': ['Bombay']}
+        d2d = dict2dot.Dict2Dot(obj)
+        assert repr(d2d) == "<dict2dot.Dict2Dot {'dogs': {'breeds': ['Golden Retriever']}, 'cats': ['Bombay']}>"
+        assert str(d2d) == "{'dogs': {'breeds': ['Golden Retriever']}, 'cats': ['Bombay']}"
 
-# log.debug(my_d2d.dogs.breeds == my_dict['dogs']['breeds'])
-# exit()
+    def test_dict_method_and_return(self):
+        obj = {'dogs': {'breeds': ['Golden Retriever', 'Labrador Retriever']}, 'cats': {'breeds': ['Bombay']}}
+        d2d = dict2dot.Dict2Dot(obj)
+        assert isinstance(d2d.dict(), dict)
+        assert d2d.dict() == obj
 
+    def test_update_empty_object(self):
+        d2d = dict2dot.Dict2Dot()
+        # d2d.update({'a_new_key': 'a new value'})
+        # assert d2d.a_new_key == 'a new value'
+        # assert d2d.dict() == {'a_new_key': 'a new value'}
 
-log.debug(f'********** Test updates from None')
-d2d = dict2dot.Dict2Dot()
-# var.update({'name': 'variable'})
+    def test_update_nested_values(self):
+        obj = {'id': 6, 'names': {'first': 'Janelle', 'last': 'Monáe'}, 'pronouns': ['They', 'Them']}
+        d2d = dict2dot.Dict2Dot()
+        # assert d2d.names.first == 'Janelle'
+        # d2d.pronouns.append('Their')
+        # assert d2d.pronouns[-1] == 'Their'
+        # assert d2d.dict()['pronouns'][-1] == 'Their'
+        # d2d.names.update({'full': 'Janelle Monáe Robinson'})
+        # assert d2d.names.full == 'Janelle Monáe Robinson'
+        # assert d2d.dict()['names']['full'] == 'Janelle Monáe Robinson'
 
-log.debug(f'********** Test updates on nested dict and list')
-obj = {'id': 6, 'names': {'first': 'Janelle', 'last': 'Monáe'}, 'pronouns': ['They', 'Them']}
-d2d = dict2dot.Dict2Dot(obj)
-# d2d.names.update({'full': 'Janelle Monáe Robinson'})
-# d2d.pronouns.append('Their')
-# assert d2d.names.first == 'Janelle'
-# assert d2d.pronouns[-1] == 'Their'
-
-log.debug(f'********** Test updates on deep nested objects')
-obj = {'pets': [{'species': 'Canis familiaris', 'names': [{'Bono': {'age': 6}}, {'Gaia': {'age': 5}}]}]}
-d2d = dict2dot.Dict2Dot(obj)
-# family.elder[0].append({'grandchild_1_1': {}})
+    def test_update_deeply_nested_values(self):
+        obj = {'pets': [{'species': 'Canis familiaris', 'names': [{'Bono': {'age': 6}}, {'Gaia': {'age': 5}}]}]}
+        d2d = dict2dot.Dict2Dot(obj)
+        # family.elder[0].append({'grandchild_1_1': {}})
