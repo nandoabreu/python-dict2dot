@@ -7,7 +7,8 @@ age:
 	@echo Running package from ${age}s ago
 
 test: age
-	@PYTHONPATH=. PYTHONSTARTUP=tests/repl-modules.py python -B tests/__main__.py
+	@PYTHONPATH=. PYTHONSTARTUP=tests/repl-modules.py python -B -m unittest tests/__main__.py -v -f
+#	@PYTHONPATH=. PYTHONSTARTUP=tests/repl-modules.py python -B tests/__main__.py
 
 shell: age
 	@PYTHONPATH=. PYTHONSTARTUP=tests/repl-modules.py python -B
