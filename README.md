@@ -90,12 +90,14 @@ Documentation can also be found in [docs](docs).
 
 ## ToDo
 
+- [ ] Read child dictionaries in parent iterators other than list or dict
+- [ ] Expose parsed attributes to autocomplete (*)
+- [ ] Remove keys and nested keys previously set
+- [ ] Update or add keys and nested keys in instance
 - [ ] Add escape option, as vars() in SimpleNamespace
   - [ ] Could be `dict(Dict2Dot({'id': 6}))`
 - [ ] Add recursing limitation option
-- [ ] Expose parsed attributes to autocomplete (*)
-- [ ] Remove elements from class
-- [ ] Read and change child dictionaries in parent iterators other than list or dict
+- [ ] Add a tree exhibition of the keys
 - [ ] Improve documentation
 
 (*) Auto complete:
