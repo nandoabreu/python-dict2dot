@@ -33,6 +33,9 @@ print(my_d2d.dogs.breeds)
 
 print(my_d2d.dogs.breeds == my_dict['dogs']['breeds'])
 # True
+
+print(my_d2d.dogs.breeds[-1] == my_dict['dogs']['breeds'][-1])
+# True
 ```
 
 
@@ -45,16 +48,26 @@ famous_dict = {'id': 6, 'names': {'first': 'Janelle', 'last': 'Monáe'}, 'pronou
 famous_d2d = Dict2Dot(famous_dict)
 famous_d2d.names.update({'full': 'Janelle Monáe Robinson'})
 famous_d2d.pronouns.append('Their')
-# {'first': 'Janelle', 'last': 'Monáe', 'full': 'Janelle Monáe Robinson'}
+print(famous_d2d)
+# {'id': 6, 'names': {'first': 'Janelle', 'last': 'Monáe', 'full': 'Janelle Monáe Robinson'}, 'pronouns': ['They', 'Them', 'Their']}
 
 family_dict = {'elder': [{'child_1': [], 'child_2': [{'grandchild_2_1': []}, {'grandchild_2_2': []}]}]}
 family = Dict2Dot(family_dict)
-#
+family.elder[0].child_1.extend(['has two dogs', 'has a bird'])
+family.elder[0].child_2[-1].grandchild_2_2.append('has 1 dog')
+print(family)
+# {'elder': [{'child_1': ['has two dogs', 'has a bird'], 'child_2': [{'grandchild_2_1': []}, {'grandchild_2_2': ['has 1 dog']}]}]}
+
+print(type(family))
+# <class 'dict2dot.Dict2Dot'>
+
+print(type(family.dict()))
+# <class 'dict'>
 
 other_dot2dict = Dict2Dot()
 other_dot2dict.a_new_key = 'a new value'
-print(other_dot2dict.dict())
-# {'a_new_key': 'a new value'}
+print(other_dot2dict.a_new_key)
+# a new value
 ```
 
 
@@ -62,25 +75,25 @@ print(other_dot2dict.dict())
 
 Using Python Shell/REPL, autocomplete should respond. Assign a variable to a Dict2Dot dictionary 
 instantiation and use the <tab> to autocomplete the dictionary keys after the dot:
-```shell
-python
-```
 ```python
 from dict2dot import Dict2Dot
 d2d = Dict2Dot({'dogs': {'breeds': ['Golden Retriever']}})
 d2d.dogs.bre  # hit the <tab> key to complete "breeds"
 ```
 
+Note: autocomplete will not respond inside a list.
+```python
+from dict2dot import Dict2Dot
+d2d = Dict2Dot({'name': {'first': 'First name'}, 'parents': [{'mom': "Mom's name"}, {'dad': "Dad's name"}]})
+d2d.name.fir  # hitting <tab> autocompletes "first"
+d2d.name.paren  # hitting <tab> autocompletes "parents"
+d2d.parents[0].mom  # no autocomplete available
+```
+
 
 ## Documentation
 
-Please try from python console:
-```python
-from dict2dot import Dict2Dot
-help(Dict2Dot)
-```
-
-Or try from command line:
+Please try from command line:
 ```shell
 python -c "import dict2dot; print(dict2dot.__doc__)"
 ```
@@ -91,19 +104,8 @@ Documentation can also be found in [docs](docs).
 ## ToDo
 
 - [ ] Read child dictionaries in parent iterators other than list or dict
-- [ ] Expose parsed attributes to autocomplete (*)
 - [ ] Remove keys and nested keys previously set
-- [ ] Update or add keys and nested keys in instance
-- [ ] Add escape option, as vars() in SimpleNamespace
-  - [ ] Could be `dict(Dict2Dot({'id': 6}))`
 - [ ] Add recursing limitation option
 - [ ] Add a tree exhibition of the keys
-- [ ] Improve documentation
-
-(*) Auto complete:
-```python
-from dict2dot import Dict2Dot
-d = Dict2Dot({'id': 6, 'names': {'first': 'Janelle', 'last': 'Monáe'}, 'pronouns': ['They', 'Them']})
-# d. (and tab twice)
-dir(d)
-```
+- [ ] Try to enable autocomplete for nested D2D in lists: `d2d.parents[0].mom`
+- [ ] Update documentation (in the "docs" dir)
