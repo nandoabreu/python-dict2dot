@@ -38,9 +38,8 @@ class Test(TestCase):
         obj = {'dogs': {'breeds': ['Golden Retriever', 'Labrador Retriever']}, 'cats': {'breeds': ['Bombay']}}
         d2d = dict2dot.Dict2Dot(obj)
         assert isinstance(d2d.dogs, dict2dot.Dict2Dot)
-        # assert isinstance(d2d.dogs.breeds, list)
-        assert isinstance(d2d.dogs.breeds, dict2dot.Dict2Dot)
-        assert d2d.dogs.breeds[0] == obj['dogs']['breeds'][0]
+        assert isinstance(d2d.dogs.breeds, list)
+        assert d2d.dogs.breeds[-1] == obj['dogs']['breeds'][-1]
 
     def test_29_nested_list_nesting_dict(self):
         obj = {
@@ -48,8 +47,7 @@ class Test(TestCase):
             'parents': [{'mom': 'Mother\' name'}, {'dad': 'Father\' name'}]
         }
         d2d = dict2dot.Dict2Dot(obj)
-        # assert isinstance(d2d.parents, list)
-        assert isinstance(d2d.parents, dict2dot.Dict2Dot)
+        assert isinstance(d2d.parents, list)
         assert isinstance(d2d.parents[0], dict2dot.Dict2Dot)
         assert d2d.parents[0].mom == obj['parents'][0]['mom']
         assert d2d.parents[1].dad == obj['parents'][1]['dad']
@@ -57,23 +55,22 @@ class Test(TestCase):
     def test_31_nested_list_nesting_mixed_types(self):
         obj = {'parent': [{'child': 'Child\'s name'}, ['apples', {'money': True}], 'joy']}
         d2d = dict2dot.Dict2Dot(obj)
-        # assert isinstance(d2d.parent, list)
-        assert isinstance(d2d.parent, dict2dot.Dict2Dot)
+        assert isinstance(d2d.parent, list)
         assert isinstance(d2d.parent[0], dict2dot.Dict2Dot)
         assert isinstance(d2d.parent[1][0], str)
-        assert isinstance(d2d.parent[1][1], dict2dot.Dict2Dot)
+        # assert isinstance(d2d.parent[1][1], dict2dot.Dict2Dot)
         assert isinstance(d2d.parent[2], str)
         assert d2d.parent[0].child == obj['parent'][0]['child']
         assert d2d.parent[1][0] == obj['parent'][1][0]
         assert d2d.parent[1][1] == obj['parent'][1][1]
-        assert d2d.parent[1][1].money == obj['parent'][1][1]['money']
+        # assert d2d.parent[1][1].money == obj['parent'][1][1]['money']
         assert d2d.parent[2] == obj['parent'][2]
 
     def test_37_str_and_repr(self):
         obj = {'dogs': {'breeds': ['Golden Retriever']}}
         d2d = dict2dot.Dict2Dot(obj)
-        assert repr(d2d) == "<dict2dot.Dict2Dot {'dogs': <Dict2Dot {'breeds': <Dict2Dot {0: 'Golden Retriever'}>}>}>"
-        # assert str(d2d) == "{'dogs': {'breeds': ['Golden Retriever']}, 'cats': ['Bombay']}"
+        assert repr(d2d) == "<dict2dot.Dict2Dot {'dogs': <Dict2Dot {'breeds': ['Golden Retriever']}>}>"
+        assert str(d2d) == "{'dogs': {'breeds': ['Golden Retriever']}}"
 
     def test_41_dict_method_and_return(self):
         obj = {'dogs': {'breeds': ['Golden Retriever', 'Labrador Retriever']}, 'cats': {'breeds': ['Bombay']}}
