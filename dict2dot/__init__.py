@@ -1,59 +1,84 @@
 #! /usr/bin/env python3
-'''
+"""
 Python Dictionary to Dot notation (class) package
 
-This package works with nested dictionaries, but not with dictionaries nested into other types.
+This implementation admits dot notation to access dictionaries **and nested dictionaries**.
 
 
-API usage:
+Basic usage:
+
+    python
+
     from dict2dot import Dict2Dot
+    obj = {'pet': {'genus': 'Canis', 'name': 'Bono', 'breed': 'Golden Retriever'}}
+    d2d = Dict2Dot(obj)
+    print(d2d.pet.breed)
+"""
+from json import loads
 
-    my_d2dot = Dict2Dot({'dogs': {'breeds': ['Golden']}, 'birds': {'breeds': ['Cockatiel']}})
-    my_d2dot.dogs.breeds.append('Lhasa Apso')
-    print( my_d2dot.dogs )
+from .Logger import Logger
 
-    my_dict = my_d2dot.dict()
-    print( my_dict )
-
-    other_dot2dict = Dict2Dot()
-    other_dot2dict.a_new_key = 'a new value'
-    print( other_dot2dict.a_new_key )
-'''
-
-
-import re
 
 class Dict2Dot(dict):
-    '''
-    Dict2Dot class: "the main class"
+    def __init__(self, obj: dict = None, depth: int = 0, debug: bool = False):  # todo: debug defaults to False
+        self._log = Logger(log_level='DEBUG' if debug else 'WARNING').get_logger()
+        self._depth = depth
 
-    Arguments:
-        (dictionary, optional): A preexistent dictionary may be passed
-    '''
-    def __init__(self, orig={}):
-        # Set a preexistent dict into self
-        for key in orig:
-            self.__setattr__(key, orig[key])
+        self._id = int(str(id(self))[-3:])
+        self._log.debug('{}{} depth {}, id {} for {}: {}'.format(
+            "  " * depth, self.__class__.__name__, depth, self._id, type(obj).__name__.upper(), obj
+        ))
+
+        clone = obj.copy() if isinstance(obj, dict) else {}
+        super().__init__(clone)
+
+        self._log.debug(f'{"  " * depth}Request object set')
+        self._set(clone, depth)
 
     def __getattr__(self, key):
-        # Return a value from the dict (even nested)
         return self[key]
 
-    def __setattr__(self, key, value):
-        # Set values, including nested dicts, so that parent.child.son can be acessed
-        if isinstance(value, dict):
-            self[key] = Dict2Dot(value)
-        else:
+    def _set(self, obj, depth: int = 0):
+        self._log.debug(f'{"  " * depth}Start {type(obj).__name__.upper()} object parse')
+        self._log.debug(f'{"  " * depth}Start LOOP over keys {obj.keys()}')
+
+        for key, value in obj.items():
+            self._log.debug(f'{"  " * depth}Start SET key {key}')
+            msg = '{}{} has {} as value type -- '.format("  " * depth, key, type(value).__name__.upper())
+
+            if isinstance(value, dict):
+                msg += 'RECURSE'
+                self._log.debug(msg)
+                self[key] = Dict2Dot(value, depth + 1)
+                super().__setattr__(key, self[key])
+                continue
+
+            elif isinstance(value, list):
+                for i, item in enumerate(value):
+                    if isinstance(item, dict):
+                        value[i] = Dict2Dot(item, depth + 1)
+                        # TODO: Try to autocomplete nested in lists (i.e.: "mom" `d2d.parents[0].mom`)
+
+            msg += 'SET {} as {} in instance {}'.format(key, value, self._id)
+            self._log.debug(msg)
             self[key] = value
+            super().__setattr__(key, self[key])
+            self._log.debug(f'{"  " * depth}Ended key {key} set')
+
+        self._log.debug(f'{"  " * depth}Ended object {type(obj).__name__.upper()} parse')
 
     def dict(self) -> dict:
-        '''Return updated dictionary'''
-        return eval(str(self))
+        return loads(str(self).replace("'", '"'))
+
+    def tree(self, sort: bool = True) -> None:
+        print('[TBI Warning] The "tree" method is to be implemented')
 
     def __str__(self) -> str:
-        '''String representation of the dictionary'''
-        return re.sub('<Dict2Dot at \d+: ', '', re.sub('>', '', repr(self)))
+        res = super().__repr__()
+        return res\
+            .replace(f'<{self.__class__.__name__} ', '')\
+            .replace('}>', '}')
 
     def __repr__(self) -> str:
-        return f'<Dict2Dot at {id(self)}: {dict.__repr__(self)}>'
-
+        name = '{}.{}'.format(self.__module__, self.__class__.__name__) if not self._depth else self.__class__.__name__
+        return '<{} {}>'.format(name, super().__repr__())
