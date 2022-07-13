@@ -6,10 +6,12 @@ This implementation admits dot notation to access dictionaries **and nested dict
 
 
 Basic usage:
-    from dict2dot import Dict2Dot
 
+    python
+
+    from dict2dot import Dict2Dot
     obj = {'pet': {'genus': 'Canis', 'name': 'Bono', 'breed': 'Golden Retriever'}}
-    d2d = dict2dot.Dict2Dot(obj)
+    d2d = Dict2Dot(obj)
     print(d2d.pet.breed)
 """
 from json import loads
@@ -18,13 +20,7 @@ from .Logger import Logger
 
 
 class Dict2Dot(dict):
-    """
-    Dict2Dot class: "the main class"
-
-    Arguments:
-        (dictionary or list, optional): A pre-existent dictionary may be passed
-    """
-    def __init__(self, obj: (dict, list) = None, depth: int = 0, debug: bool = False):  # todo: debug defaults to False
+    def __init__(self, obj: dict = None, depth: int = 0, debug: bool = False):  # todo: debug defaults to False
         self._log = Logger(log_level='DEBUG' if debug else 'WARNING').get_logger()
         self._depth = depth
 
@@ -33,11 +29,8 @@ class Dict2Dot(dict):
             "  " * depth, self.__class__.__name__, depth, self._id, type(obj).__name__.upper(), obj
         ))
 
-        clone = obj
-        if isinstance(obj, (dict, list)):
-            clone = obj.copy()  # need to keep original
-            if isinstance(clone, dict):
-                super().__init__(clone.copy())
+        clone = obj.copy() if isinstance(obj, dict) else {}
+        super().__init__(clone)
 
         self._log.debug(f'{"  " * depth}Request object set')
         self._set(clone, depth)
@@ -47,52 +40,44 @@ class Dict2Dot(dict):
 
     def _set(self, obj, depth: int = 0):
         self._log.debug(f'{"  " * depth}Start {type(obj).__name__.upper()} object parse')
+        self._log.debug(f'{"  " * depth}Start LOOP over keys {obj.keys()}')
 
-        # keys = list(obj.keys()) if isinstance(obj, dict) else range(len(obj)) if isinstance(obj, list) else []
-        keys = obj.items() if isinstance(obj, dict) else enumerate(obj) if isinstance(obj, list) else None
+        for key, value in obj.items():
+            self._log.debug(f'{"  " * depth}Start SET key {key}')
+            msg = '{}{} has {} as value type -- '.format("  " * depth, key, type(value).__name__.upper())
 
-        if not keys:
-            self._log.debug(f'{"  " * depth}Object has NO keys: MAY need set')
+            if isinstance(value, dict):
+                msg += 'RECURSE'
+                self._log.debug(msg)
+                self[key] = Dict2Dot(value, depth + 1)
+                super().__setattr__(key, self[key])
+                continue
 
-        else:
-            self._log.debug(f'{"  " * depth}Start LOOP over keys {keys}')
+            elif isinstance(value, list):
+                for i, item in enumerate(value):
+                    if isinstance(item, dict):
+                        value[i] = Dict2Dot(item, depth + 1)
+                        # TODO: Try to autocomplete nested in lists (i.e.: "mom" `d2d.parents[0].mom`)
 
-            for key, value in keys:
-                self._log.debug(f'{"  " * depth}Start SET key {key}')
-                msg = '{}{} has {} as value type -- '.format("  " * depth, key, type(value).__name__.upper())
-
-                if isinstance(value, (dict, list)):
-                    msg += 'RECURSE'
-                    self._log.debug(msg)
-                    self[key] = Dict2Dot(value, depth + 1)
-
-                else:
-                    msg += 'SET {} as {} in instance {}'.format(key, value, self._id)
-                    self._log.debug(msg)
-                    self[key] = value
-                    self._log.debug(f'{"  " * depth}Ended key {key} set')
+            msg += 'SET {} as {} in instance {}'.format(key, value, self._id)
+            self._log.debug(msg)
+            self[key] = value
+            super().__setattr__(key, self[key])
+            self._log.debug(f'{"  " * depth}Ended key {key} set')
 
         self._log.debug(f'{"  " * depth}Ended object {type(obj).__name__.upper()} parse')
 
     def dict(self) -> dict:
-        return loads('{}'.format(super().__repr__().replace("'", '"')))
+        return loads(str(self).replace("'", '"'))
 
     def tree(self, sort: bool = True) -> None:
-        # pairs = list(super().items())
-        # if sort:
-        #     pairs.sort()
-        #
-        # for key, value in pairs:
-        #     print(f'# chack instance of {key}: {type(value)}')
-        #     if isinstance(value, Dict2Dot):
-        #         print(key)
-        #         value.tree()
-        #     else:
-        #         print('{}: {!r} ({})'.format(key, value, type(value).__name__))
-        pass
+        print('[TBI Warning] The "tree" method is to be implemented')
 
     def __str__(self) -> str:
-        return super().__repr__()
+        res = super().__repr__()
+        return res\
+            .replace(f'<{self.__class__.__name__} ', '')\
+            .replace('}>', '}')
 
     def __repr__(self) -> str:
         name = '{}.{}'.format(self.__module__, self.__class__.__name__) if not self._depth else self.__class__.__name__
