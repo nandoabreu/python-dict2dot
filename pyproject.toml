@@ -1,0 +1,38 @@
+[tool.poetry]
+version = "0.3.0"
+name = "python-dict2dot"
+description = "Python Dictionary to Dot notation Package"
+maintainers = ["Fernando Abreu <49952773+nandoabreu@users.noreply.github.com>"]
+authors = ["Fernando Abreu <49952773+nandoabreu@users.noreply.github.com>"]
+repository = "https://github.com/nandoabreu/python-dict2dot"
+homepage = "https://github.com/nandoabreu/python-dict2dot"
+documentation = "https://github.com/nandoabreu/python-dict2dot"
+readme = "README.md"
+keywords = ["python", "project", "dot", "notation", "dot-notation", "dotnotation", "dictionary"]
+packages = [{include = "disct2dot", from = "src"}]
+classifiers = [
+    "Topic :: Software Development",
+    "Typing :: Typed",
+]
+
+[tool.poetry.dependencies]
+python = ">=3.7,<3.10||>3.10,<3.12" # pyinstaller does not work on 3.10 or 3.11-beta
+#tomli = { version = "^2.0.1", python = "<3.11" }
+#prettyconf = "^2.2.1"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^7.2.1"
+pytest-cov = "^4.0.0"
+pre-commit = "^2.21.0"
+
+[tool.poetry.scripts]
+install-pre-commit = "pre-commit:main"
+
+[build-system]
+requires = [
+    "poetry-core>=1.3.2",
+    "setuptools>=67.3.2",
+#    "wheel",
+#    "versioneer[toml]",
+]
+build-backend = "poetry.core.masonry.api"
